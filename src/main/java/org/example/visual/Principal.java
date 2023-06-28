@@ -1,7 +1,6 @@
 package org.example.visual;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 
 public class Principal extends JDialog {
@@ -13,13 +12,12 @@ public class Principal extends JDialog {
     private JButton ordenarButton;
     private JButton componentesButton;
     private JButton registrarComponenteButton;
-    private JLabel jpic;
+    private JTextField XYZComponentsTextField;
 
     public Principal() {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-
 
 
         movimientoInventarioButton.addActionListener(new ActionListener() {
@@ -87,7 +85,7 @@ public class Principal extends JDialog {
         dialog.setSize(500,400);
         System.exit(0);
 
-      //  JButton movimientoInventarioButton = new JButton();
+        //  JButton movimientoInventarioButton = new JButton();
 
 
     }

@@ -9,17 +9,12 @@ import com.mongodb.client.model.Projections;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.example.clases.CRUDModel;
-import org.example.clases.Componente;
 import org.example.clases.MovimientoInventario;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static com.mongodb.client.model.Projections.computed;
 import static com.mongodb.client.model.Projections.excludeId;
@@ -31,8 +26,9 @@ public class moverInventario extends JDialog {
     private JTable showTable;
     private JButton registrarMovimientoButton;
     private JTextField txtMovimientoTextField;
-    private JTextField textField2;
-    private JTextField textField3;
+    private JTextField fechaTXT;
+    private JTextField almacenTXT;
+    private JComboBox movimientoCBX;
     private JTextField textField4;
 
     CRUDModel crudModel = new CRUDModel();
@@ -40,14 +36,11 @@ public class moverInventario extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+        movimientoCBX.addItem("ENTRADA");
+        movimientoCBX.addItem("SALIDA");
         createTable();
 
 
-        buttonCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        });
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -63,23 +56,20 @@ public class moverInventario extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        buttonCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+
         registrarMovimientoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //tableLoad();
+                createTable();
+                DefaultTableModel tableModel = (DefaultTableModel) showTable.getModel();
+
                 Boolean ready = true;
 
                 String codMovimiento, fecha, codAlmacen, tipoMov;
-                codMovimiento = txtMovimientoTextField.getText();
-                fecha= textField2.getText();
-                codAlmacen= textField3.getText();
-                tipoMov = textField4.getText();
+                codMovimiento = "11";
+                fecha= fechaTXT.getText();
+                codAlmacen= almacenTXT.getText();
+                tipoMov = (String) movimientoCBX.getSelectedItem();
 
 
                 if(codMovimiento.equals("") || codAlmacen.equals("")|| tipoMov.equals("")){
@@ -94,15 +84,27 @@ public class moverInventario extends JDialog {
                 if(ready){
 
 
-                    List item = new ArrayList<>();
-                    item.add(codAlmacen);
-
 
                     MovimientoInventario aux_movimiento = new MovimientoInventario();
                     aux_movimiento.setCodigoMovimiento(codMovimiento);
                     aux_movimiento.setFechaMovimiento(fecha);
                     aux_movimiento.setCodigoAlmacen(codAlmacen);
                     aux_movimiento.setTipoMovimiento(tipoMov);
+
+                    List<String> detalles = new ArrayList<String>();
+                    //aux_movimiento.agregarDetalle(showTable.getModel().getValueAt(0, 0));
+                    int nRow = showTable.getRowCount(), nCol = showTable.getColumnCount();
+                    // Object[][] tableData = new Object[nRow][nCol];
+                    for (int i = 0 ; i < nRow ; i++)
+                        for (int j = 0 ; j < nCol ; j++){
+                            Object celda = showTable.getValueAt(i,j);
+                            detalles.add(String.valueOf(celda));
+
+                        }
+                    for(int i = 0; i < detalles.size(); i++)
+                        aux_movimiento.setDetalle(Collections.singletonList(detalles.get(i)));
+                    //ARREGLAR AQUI JUYE
+                    //System.out.println(tableData[0] + "CheckPoint");
 
                     String connectionString = "mongodb://localhost:27017/"; //CAMBIAR
                     ServerApi serverApi = ServerApi.builder()
@@ -115,15 +117,28 @@ public class moverInventario extends JDialog {
                     try (MongoClient mongoClient = MongoClients.create(settings)) {
                         //CAMBIAR BASE DE DATOS
                         MongoDatabase database = mongoClient.getDatabase("XYZComputers");
-                        //Obtener objeto de un Collection
-
+                        // MongoCollection movimiento = database.getCollection("MovimientoInventario");
                         crudModel.insertarDocumentoMovimiento(database,aux_movimiento);
+
+                        //Obtener objeto de un Collection
+                        //datos.put("codigoComponente", mv.getDetalle().get(0));
+                       /* Bson unwind = Aggregates.unwind("$detalle");
+                        Bson fields = Projections.fields(excludeId(), computed("unidad", "$detalle.unidad"),
+                                computed("codigoComponente",
+                                        "$detalle.codigoComponente"),computed("cantidadMovimiento", "$cantidadMovimiento"));
+                        Bson project = Aggregates.project(fields);
+                        Bson[] etapas = {unwind, project};
+                        AggregateIterable<Document> aggregate = movimiento.aggregate(Arrays.asList(etapas));
+
+                        aggregate.forEach(documento -> {
+
+                            System.out.println(documento);
+                        });*/
+
                         JOptionPane.showMessageDialog(null, "Componente Agregado Exitosamente");
                         createTable();
-                        txtMovimientoTextField.setText("");
-                        textField2.setText("");
-                        textField3.setText("");
-                        textField4.setText("");
+                        fechaTXT.setText("");
+                        almacenTXT.setText("");
 
 
                     }
@@ -131,8 +146,23 @@ public class moverInventario extends JDialog {
 
                 }}
 
-        }); }
+        });
+    }
+/*
+    public JTable createTable(){
 
+
+
+        String[] columnNames = {"unidad", "Componente", "Cantidad"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        model.addRow(new Object[] {0,0,0,0 });
+        showTable.setModel(model);
+
+
+        return showTable;
+    }
+*/
 
     public JTable createTable(){
 
@@ -155,28 +185,27 @@ public class moverInventario extends JDialog {
             FindIterable<Document> iterDoc = coll.find();
             Iterator<Document> it = iterDoc.iterator();
 
-            String[] columnNames = {"codigoMovimiento", "Fecha Movimiento", "Codigo Almacen","Tipo Movimiento"};
+            String[] columnNames = {"Componente", "Cantidad", "Unidad"};
             DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-
-            Bson fields = Projections.fields(excludeId(), computed("cod", "$codigoMovimiento"),
-                    computed("fecha",
-                            "$fechaMovimiento"),
-                    computed("codAlmacen","$codigoAlmacen"),computed("tipo","$tipoMovimiento"));
+            Bson unwind = Aggregates.unwind("$detalle");
+            Bson fields = Projections.fields(excludeId(), computed("unidad", "$unidad"),
+                    computed("codigo",
+                            "$codigoMovimiento"),
+                    computed("cantidad","$cantidadMovimiento"));
 
 
             Bson project = Aggregates.project(fields);
-            Bson[] etapas = {project};
+            Bson[] etapas = {unwind,project};
             AggregateIterable<Document> aggregate = coll.aggregate(Arrays.asList(etapas));
             aggregate.forEach(documento -> {
 
                 System.out.println(documento);
-                String cod = String.valueOf(documento.get("cod"));
-                String fecha = String.valueOf(documento.get("fecha"));
-                String almacen = (String)documento.get("codAlmacen");
-                String tipo = String.valueOf(documento.get("tipo"));
-                // String Balance = String.valueOf(documento.get("balance"));
+                String unidad = String.valueOf(documento.get("unidad"));
+                String cod = String.valueOf(documento.get("codigoComponente"));
+                String cantidad = (String)documento.get("cantidad");
 
-                model.addRow(new Object[] {cod,fecha,almacen,tipo });
+
+                model.addRow(new Object[] {unidad,cod,cantidad});
             });
 
             showTable.setModel(model);

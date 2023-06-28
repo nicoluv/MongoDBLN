@@ -4,7 +4,9 @@ import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -12,6 +14,8 @@ import org.bson.conversions.Bson;
 import java.io.IOException;
 import java.util.*;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Projections.computed;
+import static com.mongodb.client.model.Projections.excludeId;
 
 public class CRUDModel {
 
@@ -119,16 +123,16 @@ public class CRUDModel {
     public void insertarDocumentoTiempoEntrega(MongoDatabase database, TiempoEntrega te){
         MongoCollection<Document> tiempoEntrega = database.getCollection("TiempoEntregaSuplidor");
 
-            // Preparar los documentos y subdocumentos que serán insertados.
-            Document docTiempoEntrega = new Document();
+        // Preparar los documentos y subdocumentos que serán insertados.
+        Document docTiempoEntrega = new Document();
 
-            docTiempoEntrega.append("codigoSuplidor", te.getCodigoSuplidor());
-            docTiempoEntrega.append("codigoComponente", te.getCodigoComponente());
-            docTiempoEntrega.append("tiempoEntrega", te.getTiempoEntrega());
-            docTiempoEntrega.append("precio", te.getTiempoEntrega());
-            docTiempoEntrega.append("descuento", te.getDescuento());
-            docTiempoEntrega.append("activo", te.getActivo());
-            tiempoEntrega.insertOne(docTiempoEntrega);
+        docTiempoEntrega.append("codigoSuplidor", te.getCodigoSuplidor());
+        docTiempoEntrega.append("codigoComponente", te.getCodigoComponente());
+        docTiempoEntrega.append("tiempoEntrega", te.getTiempoEntrega());
+        docTiempoEntrega.append("precio", te.getTiempoEntrega());
+        docTiempoEntrega.append("descuento", te.getDescuento());
+        docTiempoEntrega.append("activo", te.getActivo());
+        tiempoEntrega.insertOne(docTiempoEntrega);
 
     }
 
@@ -147,26 +151,29 @@ public class CRUDModel {
     public void insertarDocumentoMovimiento(MongoDatabase database, MovimientoInventario mv){
         MongoCollection<Document> movimiento = database.getCollection("MovimientoInventario");
 
-            // Preparar los documentos y subdocumentos que serán insertados.
-            Document docMovimiento = new Document();
-            Document docDetalles = new Document();
+        // Preparar los documentos y subdocumentos que serán insertados.
+        Document docMovimiento = new Document();
+        Document docDetalles = new Document();
 
 
-            docMovimiento.append("codigoMovimiento", mv.getCodigoMovimiento());
-            docMovimiento.append("fechaMovimiento", mv.getFechaMovimiento());
-            docMovimiento.append("codigoAlmacen", mv.getCodigoAlmacen());
-            docMovimiento.append("tipoMovimiento", mv.getTipoMovimiento());
+        docMovimiento.append("codigoMovimiento", mv.getCodigoMovimiento());
+        docMovimiento.append("fechaMovimiento", mv.getFechaMovimiento());
+        docMovimiento.append("codigoAlmacen", mv.getCodigoAlmacen());
+        docMovimiento.append("tipoMovimiento", mv.getTipoMovimiento());
 
-            HashMap<String, Object> datos = new HashMap<>();
+        HashMap<String, Object> datosDetalle = new HashMap<>();
 
-            //datos.put("codigoComponente", mv.getDetalle().get(0));
-            datos.put("cantidadMovimiento", mv.getDetalle().get(1));
-            datos.put("unidad", mv.getDetalle().get(2));
+        for(int i = 0; i < mv.detalle.size();i++){
+            datosDetalle.put("unidad", mv.getDetalle().get(i));
+            datosDetalle.put("codigoComponente", mv.getDetalle().get(i));
+            datosDetalle.put("cantidadMovimiento", mv.getDetalle().get(i));
+        }
 
-            docDetalles.putAll(datos);
 
-            docMovimiento.put("detalle", docDetalles);
-            movimiento.insertOne(docMovimiento);
+        docDetalles.putAll(datosDetalle);
+
+        docMovimiento.put("detalle", docDetalles);
+        movimiento.insertOne(docMovimiento);
 
     }
 
@@ -349,14 +356,14 @@ public class CRUDModel {
                                 .append("amount", "$tiempoEntrega")
                                 .append("unit", "day")
                 )),
-        new Document("$match", new Document("$expr", new Document("$gte",
-                Arrays.asList("$fechaOrden",
-                        new Document("$dateTrunc",
-                                new Document("date", "$$NOW")
-                                        .append("unit", "day")
+                new Document("$match", new Document("$expr", new Document("$gte",
+                        Arrays.asList("$fechaOrden",
+                                new Document("$dateTrunc",
+                                        new Document("date", "$$NOW")
+                                                .append("unit", "day")
+                                )
                         )
-                )
-        ))),
+                ))),
                 new Document("$sort", new Document("codigoComponente", 1)
                         .append("montoComponente", 1)),
                 new Document("$group", new Document("_id", "$codigoComponente")

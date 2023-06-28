@@ -51,12 +51,12 @@ public class Main {
             Componente cm = new Componente("532", "NUEVO", "500", almacenes, 300);
             Suplidor sp = new Suplidor("nuevo", "Spl", "873-9384", "Samana", "Calle12, 54");
             TiempoEntrega te = new TiempoEntrega("nuevo", "532", 13, 250, 15, "S");
-            MovimientoInventario mi= new MovimientoInventario("nuevoMov",new String(),"1","SALIDA",detalles);
+           // MovimientoInventario mi= new MovimientoInventario("nuevoMov",new String(),"1","SALIDA",detalles);
 
             ArrayList<Componente>componentes = new ArrayList<>();
 
             CRUDModel crudModel = new CRUDModel();
-            crudModel.insertarDocumentoMovimiento(database,mi);
+            //crudModel.insertarDocumentoMovimiento(database,mi);
             //crudModel.generarOrdenComponenteIndividual(database,"a","10/10/23",componentes);
 
             // crudModel.generarOrdenCompraAutomatica(database,;

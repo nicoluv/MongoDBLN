@@ -19,17 +19,18 @@ public class MovimientoInventario {
         this.codigoAlmacen = new String();
         this.tipoMovimiento = new String();
         this.componente = new String();
+        this.detalle = detalle;
         this.cantidad = cantidad;
     }
-
-    public MovimientoInventario(String codigoMovimiento, String fechaMovimiento, String codigoAlmacen, String tipoMovimiento,  List detalle) {
-        this.codigoMovimiento = codigoMovimiento;
-        this.fechaMovimiento = fechaMovimiento;
-        this.codigoAlmacen = codigoAlmacen;
-        this.tipoMovimiento = tipoMovimiento;
-        this.detalle = detalle;
-    }
-
+    /*
+        public MovimientoInventario(String codigoMovimiento, String fechaMovimiento, String codigoAlmacen, String tipoMovimiento,  List detalle) {
+            this.codigoMovimiento = codigoMovimiento;
+            this.fechaMovimiento = fechaMovimiento;
+            this.codigoAlmacen = codigoAlmacen;
+            this.tipoMovimiento = tipoMovimiento;
+            this.detalle = detalle;
+        }
+    */
     public void setCodigoMovimiento(String codigoMovimiento) {
         this.codigoMovimiento = codigoMovimiento;
     }
@@ -85,6 +86,8 @@ public class MovimientoInventario {
     public int getCantidad() {
         return cantidad;
     }
+
+
 
 
 }
