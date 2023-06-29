@@ -1,6 +1,7 @@
 package org.example.visual;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.text.ParseException;
 
@@ -25,8 +26,9 @@ public class Principal extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 moverInventario movimiento = new moverInventario();
+                movimiento.pack();
+                movimiento.setSize(new Dimension(800,600));
                 movimiento.setVisible(true);
-                movimiento.setSize(500,400);
 
 
             }
@@ -36,8 +38,10 @@ public class Principal extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ListadoComponentes componentes = new ListadoComponentes();
-                componentes.setVisible(true);
                 componentes.pack();
+                componentes.setSize(new Dimension(800,600));
+                componentes.setVisible(true);
+
 
             }
         });
@@ -45,8 +49,11 @@ public class Principal extends JDialog {
         registrarComponenteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                RegistrarComponente aux = new RegistrarComponente();
-                aux.setVisible(true);
+                RegistrarComponente reg = null;
+                reg = new RegistrarComponente();
+                reg.pack();
+                reg.setSize(new Dimension(800,600));
+                reg.setVisible(true);
             }
         });
         buttonCancel.addActionListener(new ActionListener() {
@@ -79,6 +86,8 @@ public class Principal extends JDialog {
                 } catch (ParseException ex) {
                     throw new RuntimeException(ex);
                 }
+                generar.pack();
+                generar.setSize(new Dimension(800,600));
                 generar.setVisible(true);
             }
         });
@@ -95,7 +104,6 @@ public class Principal extends JDialog {
         Principal dialog = new Principal();
         dialog.pack();
         dialog.setVisible(true);
-        dialog.setSize(500,400);
         System.exit(0);
 
         //  JButton movimientoInventarioButton = new JButton();

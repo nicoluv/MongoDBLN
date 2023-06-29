@@ -39,22 +39,6 @@ public class RegistrarComponente extends JDialog{
 
     CRUDModel crudModel = new CRUDModel();
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("RegistrarComponente");
-        frame.setContentPane(new RegistrarComponente().PanelComponente);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-
-
-
-
-
-
-    }
-
-
     void tableLoad(){
 
         FindIterable<Document> cursor = null;
@@ -111,6 +95,8 @@ public class RegistrarComponente extends JDialog{
 
     public RegistrarComponente() {
 
+        setContentPane(PanelComponente);
+        setModal(true);
         tableLoad();
 
 
