@@ -37,6 +37,7 @@ public class generarOrden extends JDialog {
     private JSpinner cantidadSpinner;
     private JSpinner cantSpinner;
     private  JTable table1;
+    private JLabel lblConsumo;
     ArrayList<Componente> misComponentes = new ArrayList<>();
 
     public static String consumoDiario;
@@ -46,12 +47,8 @@ public class generarOrden extends JDialog {
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
         tableLoad();
-
-    /*    componenteCBX.addItem("as");
-
-        componenteCBX.addItem("MOUSE");
-
-        componenteCBX.addItem("PROCESADOR");*/
+        promedioConsumo();
+        lblConsumo.setText("El consumo diario actual es de " + consumoDiario);
 
 
         String connectionString = "mongodb://localhost:27017/"; //CAMBIAR

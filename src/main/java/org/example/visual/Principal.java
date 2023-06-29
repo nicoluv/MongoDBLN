@@ -10,11 +10,11 @@ public class Principal extends JDialog {
     private JButton buttonOK;
     private JButton buttonCancel;
     private JButton movimientoInventarioButton;
-    private JTable table1;
     private JButton ordenarButton;
     private JButton componentesButton;
     private JButton registrarComponenteButton;
     private JTextField XYZComputersTextField;
+    private JLabel lblMenu;
 
     public Principal() {
         setContentPane(contentPane);
@@ -103,6 +103,7 @@ public class Principal extends JDialog {
     public static void main(String[] args) {
         Principal dialog = new Principal();
         dialog.pack();
+        dialog.setBounds(10,10,700,800);
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
         System.exit(0);
