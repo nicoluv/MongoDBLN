@@ -38,8 +38,7 @@ public class moverInventario extends JDialog {
         getRootPane().setDefaultButton(buttonOK);
         movimientoCBX.addItem("ENTRADA");
         movimientoCBX.addItem("SALIDA");
-        createTable();
-
+        //  createTableInsert();
 
 
         // call onCancel() when cross is clicked
@@ -57,99 +56,8 @@ public class moverInventario extends JDialog {
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        registrarMovimientoButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                createTable();
-                DefaultTableModel tableModel = (DefaultTableModel) showTable.getModel();
-
-                Boolean ready = true;
-
-                String codMovimiento, fecha, codAlmacen, tipoMov;
-                codMovimiento = "11";
-                fecha= fechaTXT.getText();
-                codAlmacen= almacenTXT.getText();
-                tipoMov = (String) movimientoCBX.getSelectedItem();
-
-
-                if(codMovimiento.equals("") || codAlmacen.equals("")|| tipoMov.equals("")){
-
-                    JOptionPane.showMessageDialog(null,"Todos los campos deben estar completos");
-                    ready = false;
-                }
-                if(tipoMov.equals("ENTRADA")){
-
-                }
-
-                if(ready){
-
-
-
-                    MovimientoInventario aux_movimiento = new MovimientoInventario();
-                    aux_movimiento.setCodigoMovimiento(codMovimiento);
-                    aux_movimiento.setFechaMovimiento(fecha);
-                    aux_movimiento.setCodigoAlmacen(codAlmacen);
-                    aux_movimiento.setTipoMovimiento(tipoMov);
-
-                    List<String> detalles = new ArrayList<String>();
-                    //aux_movimiento.agregarDetalle(showTable.getModel().getValueAt(0, 0));
-                    int nRow = showTable.getRowCount(), nCol = showTable.getColumnCount();
-                    // Object[][] tableData = new Object[nRow][nCol];
-                    for (int i = 0 ; i < nRow ; i++)
-                        for (int j = 0 ; j < nCol ; j++){
-                            Object celda = showTable.getValueAt(i,j);
-                            detalles.add(String.valueOf(celda));
-
-                        }
-                    for(int i = 0; i < detalles.size(); i++)
-                        aux_movimiento.setDetalle(Collections.singletonList(detalles.get(i)));
-                    //ARREGLAR AQUI JUYE
-                    //System.out.println(tableData[0] + "CheckPoint");
-
-                    String connectionString = "mongodb://localhost:27017/"; //CAMBIAR
-                    ServerApi serverApi = ServerApi.builder()
-                            .version(ServerApiVersion.V1)
-                            .build();
-                    MongoClientSettings settings = MongoClientSettings.builder()
-                            .applyConnectionString(new ConnectionString(connectionString))
-                            .serverApi(serverApi)
-                            .build();
-                    try (MongoClient mongoClient = MongoClients.create(settings)) {
-                        //CAMBIAR BASE DE DATOS
-                        MongoDatabase database = mongoClient.getDatabase("XYZComputers");
-                        // MongoCollection movimiento = database.getCollection("MovimientoInventario");
-                        crudModel.insertarDocumentoMovimiento(database,aux_movimiento);
-
-                        //Obtener objeto de un Collection
-                        //datos.put("codigoComponente", mv.getDetalle().get(0));
-                       /* Bson unwind = Aggregates.unwind("$detalle");
-                        Bson fields = Projections.fields(excludeId(), computed("unidad", "$detalle.unidad"),
-                                computed("codigoComponente",
-                                        "$detalle.codigoComponente"),computed("cantidadMovimiento", "$cantidadMovimiento"));
-                        Bson project = Aggregates.project(fields);
-                        Bson[] etapas = {unwind, project};
-                        AggregateIterable<Document> aggregate = movimiento.aggregate(Arrays.asList(etapas));
-
-                        aggregate.forEach(documento -> {
-
-                            System.out.println(documento);
-                        });*/
-
-                        JOptionPane.showMessageDialog(null, "Componente Agregado Exitosamente");
-                        createTable();
-                        fechaTXT.setText("");
-                        almacenTXT.setText("");
-
-
-                    }
-
-
-                }}
-
-        });
     }
-/*
-    public JTable createTable(){
+    public JTable createTableInsert(){
 
 
 
@@ -162,7 +70,7 @@ public class moverInventario extends JDialog {
 
         return showTable;
     }
-*/
+
 
     public JTable createTable(){
 

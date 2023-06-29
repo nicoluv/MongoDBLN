@@ -43,20 +43,54 @@ public class Main {
             almacenes.add(3);
             almacenes.add(6000);
 
-            List detalles = new ArrayList<>();
-            detalles.add("532");
-            detalles.add(70);
-            detalles.add(600);
+
+            Detalle det = new Detalle();
+            List valores = new ArrayList<>();
+            valores.add("und");
+            valores.add("comp");
+            valores.add(700);
+            det.setValores(valores);
+
+            Detalle det2 = new Detalle();
+            List valores2 = new ArrayList<>();
+            valores2.add("und2");
+            valores2.add("comp2");
+            valores2.add(7002);
+            det2.setValores(valores2);
+
+
+
+            ArrayList detalles = new ArrayList<Detalle>();
+            detalles.add(det);
+            detalles.add(det2);
+
+           // for (int i=0 ;i<detalles.size();i++){
+           //     System.out.println("el det es" + detalles.get(i).getClass() );
+
+         //   }
+
 
             Componente cm = new Componente("532", "NUEVO", "500", almacenes, 300);
             Suplidor sp = new Suplidor("nuevo", "Spl", "873-9384", "Samana", "Calle12, 54");
             TiempoEntrega te = new TiempoEntrega("nuevo", "532", 13, 250, 15, "S");
-           // MovimientoInventario mi= new MovimientoInventario("nuevoMov",new String(),"1","SALIDA",detalles);
+           MovimientoInventario mi= new MovimientoInventario("mm","fecha","1","SALIDA","532");
+           mi.setDetalle(detalles);
+
+           for (int i=0 ;i<mi.getDetalle().size();i++){
+               Object obj = mi.getDetalle().get(i);
+
+               Detalle mobj = Detalle.class.cast(obj);
+
+               System.out.println("imprime " + mobj.getValores().get(0));
+               System.out.println("imprime " + mobj.getValores().get(1));
+               System.out.println("imprime " + mobj.getValores().get(2));
+           }
 
             ArrayList<Componente>componentes = new ArrayList<>();
 
             CRUDModel crudModel = new CRUDModel();
-            //crudModel.insertarDocumentoMovimiento(database,mi);
+
+            crudModel.insertarDocumentoMovimiento(database,mi);
             //crudModel.generarOrdenComponenteIndividual(database,"a","10/10/23",componentes);
 
             // crudModel.generarOrdenCompraAutomatica(database,;

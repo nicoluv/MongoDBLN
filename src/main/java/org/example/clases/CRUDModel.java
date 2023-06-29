@@ -4,9 +4,7 @@ import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -14,8 +12,6 @@ import org.bson.conversions.Bson;
 import java.io.IOException;
 import java.util.*;
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Projections.computed;
-import static com.mongodb.client.model.Projections.excludeId;
 
 public class CRUDModel {
 
@@ -149,11 +145,13 @@ public class CRUDModel {
     //METODOS PARA LOS MOVIMIENTOS
 
     public void insertarDocumentoMovimiento(MongoDatabase database, MovimientoInventario mv){
+
         MongoCollection<Document> movimiento = database.getCollection("MovimientoInventario");
 
         // Preparar los documentos y subdocumentos que serán insertados.
         Document docMovimiento = new Document();
         Document docDetalles = new Document();
+        Document docObj = new Document();
 
 
         docMovimiento.append("codigoMovimiento", mv.getCodigoMovimiento());
@@ -161,18 +159,30 @@ public class CRUDModel {
         docMovimiento.append("codigoAlmacen", mv.getCodigoAlmacen());
         docMovimiento.append("tipoMovimiento", mv.getTipoMovimiento());
 
-        HashMap<String, Object> datosDetalle = new HashMap<>();
 
-        for(int i = 0; i < mv.detalle.size();i++){
-            datosDetalle.put("unidad", mv.getDetalle().get(i));
-            datosDetalle.put("codigoComponente", mv.getDetalle().get(i));
-            datosDetalle.put("cantidadMovimiento", mv.getDetalle().get(i));
+
+        List<HashMap<String, Object>> data = new ArrayList<>();
+
+        for(int i = 0; i < mv.getDetalle().size();i++){
+            Object obj = mv.getDetalle().get(i);
+            Detalle mobj = Detalle.class.cast(obj);
+
+            HashMap<String, Object> datosDetalle = new HashMap<>();
+
+                datosDetalle.put("unidad", mobj.getValores().get(0));
+                datosDetalle.put("codigoComponente", mobj.getValores().get(1));
+                datosDetalle.put("cantidadMovimiento", mobj.getValores().get(2));
+                docDetalles.putAll(datosDetalle);
+                data.add(datosDetalle);
+
+
         }
 
+        docMovimiento.put("detalle", data);
 
-        docDetalles.putAll(datosDetalle);
 
-        docMovimiento.put("detalle", docDetalles);
+
+
         movimiento.insertOne(docMovimiento);
 
     }

@@ -1,5 +1,6 @@
 package org.example.clases;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class MovimientoInventario {
     String codigoAlmacen;
     String tipoMovimiento;
     String componente;
-    List detalle;
+    ArrayList<Detalle> detalle;
     int cantidad;
 
     public MovimientoInventario() {
@@ -22,6 +23,13 @@ public class MovimientoInventario {
         this.detalle = detalle;
         this.cantidad = cantidad;
     }
+
+    public MovimientoInventario(String nuevoMov, String s, String s1, String salida, List detalles) {
+    }
+
+    public MovimientoInventario(String ultimo, String fecha, String s, String salida, String s1, List detalles) {
+    }
+
     /*
         public MovimientoInventario(String codigoMovimiento, String fechaMovimiento, String codigoAlmacen, String tipoMovimiento,  List detalle) {
             this.codigoMovimiento = codigoMovimiento;
@@ -59,7 +67,15 @@ public class MovimientoInventario {
         return detalle;
     }
 
-    public void setDetalle(List detalle) {
+    public MovimientoInventario(String codigoMovimiento, String fechaMovimiento, String codigoAlmacen, String tipoMovimiento, String componente) {
+        this.codigoMovimiento = codigoMovimiento;
+        this.fechaMovimiento = fechaMovimiento;
+        this.codigoAlmacen = codigoAlmacen;
+        this.tipoMovimiento = tipoMovimiento;
+        this.componente = componente;
+    }
+
+    public void setDetalle(ArrayList<Detalle> detalle) {
         this.detalle = detalle;
     }
 
