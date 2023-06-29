@@ -8,15 +8,13 @@ import com.mongodb.client.*;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Projections;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.example.clases.Componente;
-import org.example.clases.OrdenCompra;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -32,11 +30,15 @@ public class generarOrden extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JTable table1;
-    private JTextField textField1;
-    private JTextField textField2;
-    private JTextField textField3;
+    private JTable showTable;
+    private JTextField fechatxt;
     private JButton agregarButton;
+    private JComboBox componenteCBX;
+    private JSpinner cantidadSpinner;
+    private JSpinner cantSpinner;
+    private JComboBox suplidorCBX;
+    private  JTable table1;
+    ArrayList<Componente> misComponentes = new ArrayList<>();
 
     public static String consumoDiario;
 
@@ -44,14 +46,26 @@ public class generarOrden extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-       // createTable();
-        promedioConsumo();
+        tableLoad();
 
-        buttonOK.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onOK();
-            }
-        });
+        componenteCBX.addItem("as");
+
+        componenteCBX.addItem("MOUSE");
+
+        componenteCBX.addItem("PROCESADOR");
+
+
+        String connectionString = "mongodb://localhost:27017/"; //CAMBIAR
+        ServerApi serverApi = ServerApi.builder()
+                .version(ServerApiVersion.V1)
+                .build();
+        MongoClientSettings settings = MongoClientSettings.builder()
+                .applyConnectionString(new ConnectionString(connectionString))
+                .serverApi(serverApi)
+                .build();
+
+
+
 
         buttonCancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -73,11 +87,91 @@ public class generarOrden extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        agregarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try (MongoClient mongoClient = MongoClients.create(settings)) {
+                    //CAMBIAR BASE DE DATOS
+                    MongoDatabase database = mongoClient.getDatabase("XYZComputers");
+                    String codigoComponente = (String) componenteCBX.getSelectedItem();
+
+
+                    MongoCollection<Document> componenteCollection = database.getCollection("Componente");
+
+                    // Valor seleccionado del ComboBox
+                    String valorSeleccionado = (String) componenteCBX.getSelectedItem(); // Reemplaza con el valor real seleccionado
+
+                    // Construir el filtro de búsqueda
+                    Bson filtro = new Document("descripcion", valorSeleccionado);
+
+                    // Realizar la consulta con el filtro
+                    FindIterable<Document> result = componenteCollection.find(filtro);
+                    DefaultTableModel modelo = (DefaultTableModel)table1.getModel();
+
+                    for (Document documento : result) {
+                        // Obtener los valores de cada campo y crear un arreglo de objetos
+                        Object[] fila = new Object[4]; // Cambiar el tamaño según el número de columnas
+
+                        fila[0] = documento.get("codigoComponente");
+                        fila[1] = documento.get("descripcion");
+                        int value = (Integer) cantidadSpinner.getValue();
+                        fila[2] = value;
+                        fila[3] = documento.get("unidad");
+                        // Asignar los valores de más campos si es necesario
+
+                        // Agregar la fila al modelo de la tabla
+                        modelo.addRow(fila);
+                    }
+
+
+                    for (Document documento : result) {
+                        // Obtener las claves (nombres de los campos)
+                        Set<String> campos = documento.keySet();
+
+
+                        // Imprimir los valores de cada campo
+                        for (String campo : campos) {
+                            Object valor = documento.get(campo);
+
+                            System.out.println(campo + ": " + valor);
+                        }
+                        System.out.println("-------------------");
+                    }
+                }
+
+                   // addTable(codigoComponente);
+            }
+        });
     }
 
+    void addTable(String codigoComponente){
+        DefaultTableModel model = (DefaultTableModel)table1.getModel();
+
+
+        model.addRow(new Object[] {codigoComponente,"HOLA TODOS","UND","ALMACEN","200"});
+
+
+        table1.setModel(model);
+    }
+    void tableLoad(){
+
+
+            String[] columnNames = {"codigoComponente", "Componente", "Cantidad","Unidad"};
+            DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+
+            //model.addRow(new Object[] { codComponente, Descripcion, Unidad, Almacen});
+
+
+
+            table1.setModel(model);
+
+    }
 
     public void promedioConsumo() throws ParseException {
-        
+
 
 
         Date tdate = new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(LocalDate.now()));
@@ -156,55 +250,9 @@ public class generarOrden extends JDialog {
 
 
 
-    public JTable createTable(){
-        FindIterable<Document> cursor = null;
 
-        String connectionString = "mongodb://localhost:27017/"; //CAMBIAR
-        ServerApi serverApi = ServerApi.builder()
-                .version(ServerApiVersion.V1)
-                .build();
-        MongoClientSettings settings = MongoClientSettings.builder()
-                .applyConnectionString(new ConnectionString(connectionString))
-                .serverApi(serverApi)
-                .build();
-        try (MongoClient mongoClient = MongoClients.create(settings)) {
-            //CAMBIAR BASE DE DATOS
-            MongoDatabase database = mongoClient.getDatabase("XYZComputers");
-            //Obtener objeto de un Collection
 
-            List<OrdenCompra> ordenesCompra = new ArrayList<>();
-            MongoCollection<Document> componentesCollection = database.getCollection("componentes");
-            MongoCollection<Document> proveedoresCollection = database.getCollection("proveedores");
-            FindIterable<Document> iterDoc = componentesCollection.find();
-            Iterator<Document> it = iterDoc.iterator();
-            ArrayList<Componente> componentes = null; // ARREGLAR ESTO DIOS MIO
-            // Recorrer la coleccion de componentes
-            for (Componente componente : componentes) {
-
-                    Bson proveedoresFiltro = Filters.and(
-                            Filters.eq("componenteId", componente.getCodigoComponente()),
-                            Filters.eq("activo", true)
-                    );
-                    List<Document> proveedoresDocs = proveedoresCollection.find(proveedoresFiltro).into(new ArrayList<>());
-
-                    // Ordenar los proveedores por fecha de entrega ascendente y precio ascendente
-                    Collections.sort(proveedoresDocs, Comparator.comparing(d -> d.getDate("tiempoEntrega")));
-
-                    // Obtener el proveedor con la fecha de entrega más temprana y/o menor costo
-                    Document proveedorSeleccionado = proveedoresDocs.get(0);
-
-                    // Generar la orden de compra para el proveedor seleccionado
-                    OrdenCompra ordenCompra = new OrdenCompra();
-                    ordenCompra.setNumeroOrden((String) proveedorSeleccionado.get("nombre"));
-                    ordenCompra.setFechaOrden(new Date());
-                    ordenCompra.agregarComponente(componente);
-                    ordenesCompra.add(ordenCompra);
-                }
-
-        }
-        return table1;
-    }
-    private void onOK() {
+            private void onOK() {
         // add your code here
         dispose();
     }
@@ -221,3 +269,4 @@ public class generarOrden extends JDialog {
         System.exit(0);
     }
 }
+
