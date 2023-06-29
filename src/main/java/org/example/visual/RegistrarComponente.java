@@ -51,6 +51,7 @@ public class RegistrarComponente extends JDialog{
 
 
 
+
     }
 
 
@@ -111,6 +112,8 @@ public class RegistrarComponente extends JDialog{
     public RegistrarComponente() {
 
         tableLoad();
+
+
 
         btnComponente.addActionListener(new ActionListener() {
             @Override
@@ -196,7 +199,8 @@ public class RegistrarComponente extends JDialog{
                     Bson unwind = Aggregates.unwind("$almacenes");
                     Bson fields = Projections.fields(excludeId(), computed("codigo", "$almacenes.codigoAlmacen"),
                             computed("balance",
-                                    "$almacenes.balanceAlmacen"),computed("codigoComponente", "$codigoComponente"),computed("unidad","$unidad"),computed("descripcion","$descripcion"));
+                                    "$almacenes.balanceAlmacen"),computed("codigoComponente", "$codigoComponente"),
+                             computed("unidad","$unidad"),computed("descripcion","$descripcion"));
 
 
                     Bson project = Aggregates.project(fields);
