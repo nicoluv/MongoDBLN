@@ -14,7 +14,7 @@ public class Principal extends JDialog {
     private JButton ordenarButton;
     private JButton componentesButton;
     private JButton registrarComponenteButton;
-    private JTextField XYZComponentsTextField;
+    private JTextField XYZComputersTextField;
 
     public Principal() {
         setContentPane(contentPane);
@@ -103,6 +103,7 @@ public class Principal extends JDialog {
     public static void main(String[] args) {
         Principal dialog = new Principal();
         dialog.pack();
+        dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
         System.exit(0);
 

@@ -30,7 +30,6 @@ public class ListadoComponentes extends JDialog {
         getRootPane().setDefaultButton(volverButton);
         createTable();
 
-
         volverButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onCancel();
@@ -80,6 +79,7 @@ public class ListadoComponentes extends JDialog {
             FindIterable<Document> iterDoc = coll.find();
             Iterator<Document> it = iterDoc.iterator();
 
+
             String[] columnNames = {"codigoComponente", "Descripcion", "Unidad","Almacen","Balance"};
             DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
@@ -104,9 +104,11 @@ public class ListadoComponentes extends JDialog {
             });
 
             table1.setModel(model);
+            return table1;
+
 
         }
-        return table1;
+
     }
     private void onOK() {
         // add your code here
@@ -121,6 +123,7 @@ public class ListadoComponentes extends JDialog {
     public static void main(String[] args) {
         ListadoComponentes dialog = new ListadoComponentes();
         dialog.pack();
+        dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
         System.exit(0);
     }

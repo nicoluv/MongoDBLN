@@ -34,7 +34,7 @@
               </component>
             </children>
           </grid>
-          <component id="f7f7d" class="javax.swing.JTextField" binding="XYZComponentsTextField" default-binding="true">
+          <component id="f7f7d" class="javax.swing.JTextField" binding="XYZComputersTextField" default-binding="true">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="1" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -43,7 +43,7 @@
             <properties>
               <background color="-7893103"/>
               <font name="Arial Black" size="20" style="3"/>
-              <text value="                   XYZ Components"/>
+              <text value="                   XYZ Computers"/>
             </properties>
           </component>
         </children>

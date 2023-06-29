@@ -284,6 +284,7 @@ public class generarOrden extends JDialog {
     public static void main(String[] args) throws ParseException {
         generarOrden dialog = new generarOrden();
         dialog.pack();
+        dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
         System.exit(0);
     }
