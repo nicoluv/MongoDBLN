@@ -32,10 +32,10 @@ public class RegistrarComponente extends JDialog{
     private JButton buscarButton;
     private JTextField txtbuscar;
     private JPanel PanelComponente;
-    private JLabel lblIcon;
     private JTextField txtAlmacen;
     private JButton btnLimpiar;
     private JButton volverButton;
+    private JLabel lblIcon;
 
     CRUDModel crudModel = new CRUDModel();
 

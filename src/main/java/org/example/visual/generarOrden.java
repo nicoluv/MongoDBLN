@@ -36,7 +36,6 @@ public class generarOrden extends JDialog {
     private JComboBox componenteCBX;
     private JSpinner cantidadSpinner;
     private JSpinner cantSpinner;
-    private JComboBox suplidorCBX;
     private  JTable table1;
     ArrayList<Componente> misComponentes = new ArrayList<>();
 
@@ -48,11 +47,11 @@ public class generarOrden extends JDialog {
         getRootPane().setDefaultButton(buttonOK);
         tableLoad();
 
-        componenteCBX.addItem("as");
+    /*    componenteCBX.addItem("as");
 
         componenteCBX.addItem("MOUSE");
 
-        componenteCBX.addItem("PROCESADOR");
+        componenteCBX.addItem("PROCESADOR");*/
 
 
         String connectionString = "mongodb://localhost:27017/"; //CAMBIAR
@@ -63,6 +62,26 @@ public class generarOrden extends JDialog {
                 .applyConnectionString(new ConnectionString(connectionString))
                 .serverApi(serverApi)
                 .build();
+
+        try (MongoClient mongoClient = MongoClients.create(settings)) {
+            MongoDatabase database = mongoClient.getDatabase("XYZComputers");
+
+            MongoCollection<Document> componenteCollection = database.getCollection("Componente");
+
+            // Obtener los documentos de la colección
+            FindIterable<Document> result = componenteCollection.find();
+
+            // Recorrer los documentos y agregar las descripciones al JComboBox
+            for (Document documento : result) {
+                String descripcion = documento.getString("descripcion");
+                componenteCBX.addItem(documento.getString("descripcion"));
+            }
+
+
+
+
+        }
+
 
 
 

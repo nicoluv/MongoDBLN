@@ -2,6 +2,7 @@ package org.example.visual;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.text.ParseException;
 
 public class Principal extends JDialog {
     private JPanel contentPane;
@@ -69,6 +70,18 @@ public class Principal extends JDialog {
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
+        ordenarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                generarOrden generar = null;
+                try {
+                    generar = new generarOrden();
+                } catch (ParseException ex) {
+                    throw new RuntimeException(ex);
+                }
+                generar.setVisible(true);
+            }
+        });
     }
 
 
